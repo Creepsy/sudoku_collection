@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include "lib/cell_base.h"
+#include "lib/sudoku_base"
 
 int main() {
-    std::cout << "Placeholder" << std::endl;
+    sudoku_base<int> sudoku {};
     return 0;
 }
