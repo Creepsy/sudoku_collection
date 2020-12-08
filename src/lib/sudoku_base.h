@@ -6,8 +6,17 @@
 #include "block_base.h"
 
 template<class value_type>
+struct path_node {
+    position pos;
+    std::vector<value_type> tested_values;
+};
+
+template<class value_type>
 class sudoku_base {
     private:
+        std::vector<position> get_all_cells();
+        size_t cell_with_lowest_possibilities(const std::vector<position>& cells);
+    protected:
         std::vector<value_type> value_possibilities;
         std::vector<block_base<value_type>> blocks;
         std::map<size_t, std::map<size_t, cell_base<value_type>>> grid;
@@ -17,7 +26,9 @@ class sudoku_base {
         bool add_block(const std::vector<position>& cells);
 
         virtual bool is_valid(value_type value, const position cell) = 0;
+        virtual void initialize_grid() = 0;
         std::vector<value_type> get_possibilities(const position cell);
+        void fill_grid();
     public:
         sudoku_base(const std::vector<value_type>& value_possibilities);
         virtual ~sudoku_base();

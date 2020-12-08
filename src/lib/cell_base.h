@@ -6,6 +6,10 @@
 struct position {
     int x;
     int y;
+
+    bool operator==(const position& other) {
+        return this->x == other.x && this->y == other.y;
+    }
 };
 
 template<class value_type>

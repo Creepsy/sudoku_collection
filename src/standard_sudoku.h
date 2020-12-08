@@ -5,6 +5,7 @@
 class standard_sudoku : public sudoku_base<unsigned short> {
     private:
         bool is_valid(unsigned short value, position cell) override;
+        void initialize_grid() override;
     public:
         standard_sudoku();
         ~standard_sudoku();
