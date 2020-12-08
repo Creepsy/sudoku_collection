@@ -3,6 +3,8 @@
 #include "lib/cell_base.h"
 
 int main() {
-    std::cout << "Test" << std::endl;
+    cell_base<int> c = { 10, {1} };
+
+    std::cout << c.in_block() << ", " << c.in_row() << std::endl;
     return 0;
 }
