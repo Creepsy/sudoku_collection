@@ -6,5 +6,5 @@
 
 template<class value_type>
 struct block_base {
-    std::vector<cell_base<value_type>*> members;
+    std::vector<position> members;
 };

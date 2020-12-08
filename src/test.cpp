@@ -1,8 +1,9 @@
 #include <iostream>
 
-#include "lib/sudoku_base"
+#include "standard_sudoku.h"
 
 int main() {
-    sudoku_base<int> sudoku {};
+    standard_sudoku sudoku{};
+
     return 0;
 }
