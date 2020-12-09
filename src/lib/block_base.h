@@ -4,7 +4,6 @@
 
 #include "cell_base.h"
 
-template<class value_type>
 struct block_base {
     std::vector<position> members;
 };

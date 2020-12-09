@@ -45,7 +45,7 @@ bool sudoku_base<value_type>::add_block(const std::vector<position>& cells) {
         if(!this->has_cell(pos)) return false;
     }
 
-    this->blocks.push_back(block_base<value_type>{ cells });
+    this->blocks.push_back(block_base{ cells });
 
     for(const position& pos : cells) {
         this->grid[pos.x][pos.y].blocks.push_back(this->blocks.size() - 1);
@@ -74,26 +74,44 @@ void sudoku_base<value_type>::fill_grid() {
         std::vector<value_type> possibilities = this->get_possibilities(cells_to_fill[cell_i]);
 
         if(possibilities.size() == 0) {
-            while(path.back().tested_values.size() == this->value_possibilities.size()) {
-                this->grid[path.back().pos.x][path.back().pos.y].value = value_type{};
-                cells_to_fill.push_back(path.back().pos),
-                path.pop_back();
-            }
             this->grid[path.back().pos.x][path.back().pos.y].value = value_type{};
-            std::vector<value_type> possibilities = remove_elements_from_base(this->get_possibilities(path.back().pos), path.back().tested_values);   
-            
+            while(remove_elements_from_base(this->get_possibilities(path.back().pos), path.back().tested_values).size() == 0) {
+                cells_to_fill.push_back(path.back().pos);
+                path.pop_back();
+                this->grid[path.back().pos.x][path.back().pos.y].value = value_type{};
+            }
+            if(path.size() == 0) throw std::logic_error("Couldn't fill the grid!");
+
+            possibilities = remove_elements_from_base(this->get_possibilities(path.back().pos), path.back().tested_values);  
+
             value_type to_insert = possibilities[rand() % possibilities.size()];
             this->grid[path.back().pos.x][path.back().pos.y].value = to_insert;
-
-            path.back().tested_values.push_back(to_insert);     
+            
+            path.back().tested_values.push_back(to_insert);
         } else {
             value_type to_insert = possibilities[rand() % possibilities.size()];
             this->grid[cells_to_fill[cell_i].x][cells_to_fill[cell_i].y].value = to_insert;
-            cells_to_fill.erase(cells_to_fill.begin() + cell_i);
 
             path.push_back(path_node<value_type>{ cells_to_fill[cell_i], {to_insert} });
+            cells_to_fill.erase(cells_to_fill.begin() + cell_i);
         }
     }
+}
+
+template<class value_type>
+bool sudoku_base<value_type>::does_block_contain_value(const block_base& block, value_type value) {
+    for(const position& member : block.members) {
+        if(this->grid[member.x][member.y].value == value) return true;
+    }
+    return false;
+}
+
+template<class value_type>
+bool sudoku_base<value_type>::does_block_contain_cell(const block_base& block, position cell) {
+    for(const position& member : block.members) {
+        if(member == cell) return true;
+    }
+    return false;
 }
 
 //private

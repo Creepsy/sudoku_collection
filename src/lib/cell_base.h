@@ -7,7 +7,7 @@ struct position {
     int x;
     int y;
 
-    bool operator==(const position& other) {
+    bool operator==(const position& other) const {
         return this->x == other.x && this->y == other.y;
     }
 };

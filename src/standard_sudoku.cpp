@@ -21,6 +21,9 @@ standard_sudoku::~standard_sudoku() {
 //private
 
 bool standard_sudoku::is_valid(unsigned short value, position cell) {
+    for(const block_base& block : this->blocks) {
+        if(this->does_block_contain_cell(block, cell) && this->does_block_contain_value(block, value)) return false;
+    }
     return true;
 }
 
@@ -57,5 +60,19 @@ void standard_sudoku::initialize_grid() {
          });
     }
 
-    //TODO: add blocks
+    for(int x = 0; x < 9; x+=3) {
+        for(int y = 0; y < 9; y+=3) {
+            this->add_block(std::vector<position>{ 
+                position{ x, y },
+                position{ x + 1, y },
+                position{ x + 2, y },
+                position{ x, y + 1},
+                position{ x + 1, y + 1 },
+                position{ x + 2, y + 1 },
+                position{ x, y + 2},
+                position{ x + 1, y + 2 },
+                position{ x + 2, y + 2 },
+            });
+        }
+    }
 }
