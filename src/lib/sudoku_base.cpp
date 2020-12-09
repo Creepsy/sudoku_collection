@@ -6,12 +6,25 @@
 #include <algorithm>
 
 //helper functions
+
 template<class t>
 std::vector<t> remove_elements_from_base(const std::vector<t>& base, const std::vector<t>& to_remove);
+
+//public
 
 template<class value_type>
 sudoku_base<value_type>::sudoku_base(const std::vector<value_type>& value_possibilities)
  : value_possibilities(value_possibilities) {
+}
+
+template<class value_type>
+bool sudoku_base<value_type>::generate_unsolved(const size_t to_remove) {
+    return true;
+}
+
+template<class value_type>
+bool sudoku_base<value_type>::solve() {
+    return true;
 }
 
 template<class value_type>
@@ -66,7 +79,7 @@ bool sudoku_base<value_type>::has_cell(const position pos) {
 
 template<class value_type>
 void sudoku_base<value_type>::fill_grid() {
-    std::vector<position> cells_to_fill = this->get_all_cells();
+    std::vector<position> cells_to_fill = this->get_all_cells_matching_criteria([](const cell_base<value_type>& cell) -> bool { return true; });
     std::vector<path_node<value_type>> path;
 
     while(cells_to_fill.size() > 0) {
@@ -114,10 +127,18 @@ bool sudoku_base<value_type>::does_block_contain_cell(const block_base& block, p
     return false;
 }
 
+template<class value_type>
+bool sudoku_base<value_type>::is_valid(value_type value, position cell) {
+    for(const block_base& block : this->blocks) {
+        if(this->does_block_contain_cell(block, cell) && this->does_block_contain_value(block, value)) return false;
+    }
+    return true;
+}
+
 //private
 
 template<class value_type>
-std::vector<position> sudoku_base<value_type>::get_all_cells() {
+std::vector<position> sudoku_base<value_type>::get_all_cells_matching_criteria(cell_criteria criteria) {
     std::vector<position> cells;
     for(const std::pair<const size_t, std::unordered_map<size_t, cell_base<value_type>>>& column : this->grid) {
         for(const std::pair<const size_t, cell_base<value_type>>& cell : column.second) {
@@ -145,7 +166,13 @@ size_t sudoku_base<value_type>::cell_with_lowest_possibilities(const std::vector
     return lowest_i;
 }
 
+template<class value_type>
+bool sudoku_base<value_type>::has_unqiue_solution() {
+    return false;
+}
+
 //helper functions
+
 template<class t>
 std::vector<t> remove_elements_from_base(const std::vector<t>& base, const std::vector<t>& to_remove) {
     std::vector<t> processed;
