@@ -139,6 +139,7 @@ size_t sudoku_base<value_type>::cell_with_lowest_possibilities(const std::vector
             lowest_possib = curr_possib;
             lowest_i = i;
         }
+        if(lowest_possib == 0) break;
     }
 
     return lowest_i;

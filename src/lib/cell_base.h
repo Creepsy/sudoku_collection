@@ -7,7 +7,7 @@ struct position {
     int x;
     int y;
 
-    bool operator==(const position& other) const {
+    inline bool operator==(const position& other) const {
         return this->x == other.x && this->y == other.y;
     }
 };
@@ -17,8 +17,4 @@ struct cell_base {
     value_type value;
     position pos;
     std::vector<size_t> blocks;
-
-    bool in_block() {
-        return this->blocks.size() != 0;
-    }
 };
