@@ -7,7 +7,7 @@ standard_sudoku::standard_sudoku()
     this->initialize_grid();
     this->fill_grid();
 
-    for(const std::pair<const size_t, std::map<size_t, cell_base<unsigned short>>>& column : this->grid) {
+    for(const std::pair<const size_t, std::unordered_map<size_t, cell_base<unsigned short>>>& column : this->grid) {
         for(const std::pair<const size_t, cell_base<unsigned short>>& cell : column.second) {
             std::cout << cell.second.value << " ";
         }

@@ -119,7 +119,7 @@ bool sudoku_base<value_type>::does_block_contain_cell(const block_base& block, p
 template<class value_type>
 std::vector<position> sudoku_base<value_type>::get_all_cells() {
     std::vector<position> cells;
-    for(const std::pair<const size_t, std::map<size_t, cell_base<value_type>>>& column : this->grid) {
+    for(const std::pair<const size_t, std::unordered_map<size_t, cell_base<value_type>>>& column : this->grid) {
         for(const std::pair<const size_t, cell_base<value_type>>& cell : column.second) {
             cells.push_back(cell.second.pos);
         }

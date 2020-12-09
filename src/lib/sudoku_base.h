@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 #include "block_base.h"
 
@@ -19,7 +19,7 @@ class sudoku_base {
     protected:
         const std::vector<value_type> value_possibilities;
         std::vector<block_base> blocks;
-        std::map<size_t, std::map<size_t, cell_base<value_type>>> grid;
+        std::unordered_map<size_t, std::unordered_map<size_t, cell_base<value_type>>> grid;
 
         bool has_cell(const position pos);
         bool add_cell(const position pos);
