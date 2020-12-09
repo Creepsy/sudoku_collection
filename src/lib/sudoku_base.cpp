@@ -18,12 +18,38 @@ sudoku_base<value_type>::sudoku_base(const std::vector<value_type>& value_possib
 }
 
 template<class value_type>
-bool sudoku_base<value_type>::generate_unsolved(const size_t to_remove) {
+bool sudoku_base<value_type>::generate_unsolved(const size_t to_remove, const size_t max_tries) {
+    size_t removed = 0;
+    std::vector<position> removeable_cells = this->get_all_cells_matching_criteria([](const cell_base<value_type>& cell) -> bool { return true; });
+
+    while(removed < to_remove) {
+        size_t tries;
+        while(true) {
+            size_t cell_to_remove = rand() % removeable_cells.size();
+            value_type cell_value = this->grid[removeable_cells[cell_to_remove].x][removeable_cells[cell_to_remove].y].value;
+            this->grid[removeable_cells[cell_to_remove].x][removeable_cells[cell_to_remove].y].value = value_type{};
+            if(this->get_solution_type() == 1) {
+                removeable_cells.erase(removeable_cells.begin() + cell_to_remove);
+                break;
+            } else {
+                this->grid[removeable_cells[cell_to_remove].x][removeable_cells[cell_to_remove].y].value = cell_value;
+            }
+            tries++;
+            if(tries == max_tries) {
+                return false;
+            }
+        }
+        
+
+        removed++;
+    }
+
     return true;
 }
 
 template<class value_type>
 bool sudoku_base<value_type>::solve() {
+    std::cout << this->get_solution_type() << std::endl;
     return true;
 }
 
@@ -142,7 +168,7 @@ std::vector<position> sudoku_base<value_type>::get_all_cells_matching_criteria(c
     std::vector<position> cells;
     for(const std::pair<const size_t, std::unordered_map<size_t, cell_base<value_type>>>& column : this->grid) {
         for(const std::pair<const size_t, cell_base<value_type>>& cell : column.second) {
-            cells.push_back(cell.second.pos);
+            if(criteria(cell.second)) cells.push_back(cell.second.pos);
         }
     }
 
@@ -167,8 +193,43 @@ size_t sudoku_base<value_type>::cell_with_lowest_possibilities(const std::vector
 }
 
 template<class value_type>
-bool sudoku_base<value_type>::has_unqiue_solution() {
-    return false;
+int sudoku_base<value_type>::get_solution_type() {
+    std::vector<position> cells_to_fill = this->get_all_cells_matching_criteria([](const cell_base<value_type>& cell) -> bool { return cell.value == value_type{}; });
+    std::vector<path_node<value_type>> path;
+    size_t solution_count = 0;
+    
+    while(cells_to_fill.size() > 0) {
+        size_t cell_i = this->cell_with_lowest_possibilities(cells_to_fill);
+        std::vector<value_type> possibilities = this->get_possibilities(cells_to_fill[cell_i]);
+
+        if(possibilities.size() == 0) {
+            break;
+        } else if(possibilities.size() == 1) {
+            this->grid[cells_to_fill[cell_i].x][cells_to_fill[cell_i].y].value = possibilities[0];
+
+            path.push_back(path_node<value_type>{ cells_to_fill[cell_i], {possibilities[0]} });
+            cells_to_fill.erase(cells_to_fill.begin() + cell_i);
+        } else {
+            for(const value_type possibility : possibilities) {
+                this->grid[cells_to_fill[cell_i].x][cells_to_fill[cell_i].y].value = possibility;
+
+                solution_count += this->get_solution_type();
+
+                this->grid[cells_to_fill[cell_i].x][cells_to_fill[cell_i].y].value = value_type{};
+
+                if(solution_count > 1) break;
+            }
+            break;
+        }
+    }
+
+    if(cells_to_fill.size() == 0) solution_count++;
+
+    for(const path_node<value_type> node : path) {
+        this->grid[node.pos.x][node.pos.y].value = value_type{}; 
+    }
+
+    return solution_count;
 }
 
 //helper functions

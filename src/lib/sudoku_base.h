@@ -19,7 +19,7 @@ class sudoku_base {
 
         size_t cell_with_lowest_possibilities(const std::vector<position>& cells);
 
-        bool has_unqiue_solution();
+        int get_solution_type();
     protected:
         const std::vector<value_type> value_possibilities;
         std::vector<block_base> blocks;
@@ -38,7 +38,7 @@ class sudoku_base {
         virtual void fill_grid();
     public:
         sudoku_base(const std::vector<value_type>& value_possibilities);
-        bool generate_unsolved(const size_t to_remove);
+        bool generate_unsolved(const size_t to_remove, const size_t max_tries);
         bool solve();
         virtual ~sudoku_base();
 };

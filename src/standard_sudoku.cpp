@@ -13,6 +13,17 @@ standard_sudoku::standard_sudoku()
         }
         std::cout << std::endl;
     }
+
+    std::cout << std::endl;
+    this->generate_unsolved(40, 25);
+    std::cout << std::endl;
+
+    for(const std::pair<const size_t, std::unordered_map<size_t, cell_base<unsigned short>>>& column : this->grid) {
+        for(const std::pair<const size_t, cell_base<unsigned short>>& cell : column.second) {
+            std::cout << cell.second.value << " ";
+        }
+        std::cout << std::endl;
+    }
 }
 
 standard_sudoku::~standard_sudoku() {
