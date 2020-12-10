@@ -1,3 +1,5 @@
+#pragma once
+
 #include "sudoku_base.h"
 
 #include <stdexcept>
@@ -79,6 +81,11 @@ void sudoku_base<value_type>::solve() {
             cells_to_fill.erase(cells_to_fill.begin() + cell_i);
         }
     }
+}
+
+template<class value_type>
+std::unordered_map<size_t, std::unordered_map<size_t, cell_base<value_type>>>& sudoku_base<value_type>::get_grid() {
+    return this->grid;
 }
 
 template<class value_type>

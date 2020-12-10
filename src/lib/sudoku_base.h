@@ -39,5 +39,6 @@ class sudoku_base {
         sudoku_base(const std::vector<value_type>& value_possibilities);
         bool generate_unsolved(const size_t to_remove, const size_t max_tries);
         void solve();
+        std::unordered_map<size_t, std::unordered_map<size_t, cell_base<value_type>>>& get_grid();
         virtual ~sudoku_base();
 };
