@@ -1,7 +1,7 @@
 bDir = build/
 sDir = src/
 lDir = src/lib/
-args = -O3
+args = -O3 -g
 
 test: $(sDir)test.cpp $(bDir)standard_sudoku.o
 	g++ $(sDir)test.cpp -o test $(bDir)standard_sudoku.o $(args)

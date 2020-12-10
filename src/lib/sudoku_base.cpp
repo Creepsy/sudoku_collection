@@ -23,7 +23,7 @@ bool sudoku_base<value_type>::generate_unsolved(const size_t to_remove, const si
     std::vector<position> removeable_cells = this->get_all_cells_matching_criteria([](const cell_base<value_type>& cell) -> bool { return true; });
 
     while(removed < to_remove) {
-        size_t tries;
+        size_t tries = 0;
         while(true) {
             size_t cell_to_remove = rand() % removeable_cells.size();
             value_type cell_value = this->grid[removeable_cells[cell_to_remove].x][removeable_cells[cell_to_remove].y].value;
@@ -35,7 +35,7 @@ bool sudoku_base<value_type>::generate_unsolved(const size_t to_remove, const si
                 this->grid[removeable_cells[cell_to_remove].x][removeable_cells[cell_to_remove].y].value = cell_value;
             }
             tries++;
-            if(tries == max_tries) {
+            if(tries >= max_tries) {
                 return false;
             }
         }
@@ -48,9 +48,37 @@ bool sudoku_base<value_type>::generate_unsolved(const size_t to_remove, const si
 }
 
 template<class value_type>
-bool sudoku_base<value_type>::solve() {
-    std::cout << this->get_solution_type() << std::endl;
-    return true;
+void sudoku_base<value_type>::solve() {
+    std::vector<position> cells_to_fill = this->get_all_cells_matching_criteria([](const cell_base<value_type>& cell) -> bool { return cell.value == value_type{}; });
+    std::vector<path_node<value_type>> path;
+
+    while(cells_to_fill.size() > 0) {
+        size_t cell_i = this->cell_with_lowest_possibilities(cells_to_fill);
+        std::vector<value_type> possibilities = this->get_possibilities(cells_to_fill[cell_i]);
+
+        if(possibilities.size() == 0) {
+            this->grid[path.back().pos.x][path.back().pos.y].value = value_type{};
+            while(remove_elements_from_base(this->get_possibilities(path.back().pos), path.back().tested_values).size() == 0) {
+                cells_to_fill.push_back(path.back().pos);
+                path.pop_back();
+                this->grid[path.back().pos.x][path.back().pos.y].value = value_type{};
+            }
+            if(path.size() == 0) throw std::logic_error("Couldn't fill the grid!");
+
+            possibilities = remove_elements_from_base(this->get_possibilities(path.back().pos), path.back().tested_values);  
+
+            value_type to_insert = possibilities[rand() % possibilities.size()];
+            this->grid[path.back().pos.x][path.back().pos.y].value = to_insert;
+            
+            path.back().tested_values.push_back(to_insert);
+        } else {
+            value_type to_insert = possibilities[rand() % possibilities.size()];
+            this->grid[cells_to_fill[cell_i].x][cells_to_fill[cell_i].y].value = to_insert;
+
+            path.push_back(path_node<value_type>{ cells_to_fill[cell_i], {to_insert} });
+            cells_to_fill.erase(cells_to_fill.begin() + cell_i);
+        }
+    }
 }
 
 template<class value_type>
@@ -104,40 +132,6 @@ bool sudoku_base<value_type>::has_cell(const position pos) {
 }
 
 template<class value_type>
-void sudoku_base<value_type>::fill_grid() {
-    std::vector<position> cells_to_fill = this->get_all_cells_matching_criteria([](const cell_base<value_type>& cell) -> bool { return true; });
-    std::vector<path_node<value_type>> path;
-
-    while(cells_to_fill.size() > 0) {
-        size_t cell_i = this->cell_with_lowest_possibilities(cells_to_fill);
-        std::vector<value_type> possibilities = this->get_possibilities(cells_to_fill[cell_i]);
-
-        if(possibilities.size() == 0) {
-            this->grid[path.back().pos.x][path.back().pos.y].value = value_type{};
-            while(remove_elements_from_base(this->get_possibilities(path.back().pos), path.back().tested_values).size() == 0) {
-                cells_to_fill.push_back(path.back().pos);
-                path.pop_back();
-                this->grid[path.back().pos.x][path.back().pos.y].value = value_type{};
-            }
-            if(path.size() == 0) throw std::logic_error("Couldn't fill the grid!");
-
-            possibilities = remove_elements_from_base(this->get_possibilities(path.back().pos), path.back().tested_values);  
-
-            value_type to_insert = possibilities[rand() % possibilities.size()];
-            this->grid[path.back().pos.x][path.back().pos.y].value = to_insert;
-            
-            path.back().tested_values.push_back(to_insert);
-        } else {
-            value_type to_insert = possibilities[rand() % possibilities.size()];
-            this->grid[cells_to_fill[cell_i].x][cells_to_fill[cell_i].y].value = to_insert;
-
-            path.push_back(path_node<value_type>{ cells_to_fill[cell_i], {to_insert} });
-            cells_to_fill.erase(cells_to_fill.begin() + cell_i);
-        }
-    }
-}
-
-template<class value_type>
 bool sudoku_base<value_type>::does_block_contain_value(const block_base& block, value_type value) {
     for(const position& member : block.members) {
         if(this->grid[member.x][member.y].value == value) return true;
@@ -155,8 +149,8 @@ bool sudoku_base<value_type>::does_block_contain_cell(const block_base& block, p
 
 template<class value_type>
 bool sudoku_base<value_type>::is_valid(value_type value, position cell) {
-    for(const block_base& block : this->blocks) {
-        if(this->does_block_contain_cell(block, cell) && this->does_block_contain_value(block, value)) return false;
+    for(const size_t& block_id : this->grid[cell.x][cell.y].blocks) {
+        if(this->does_block_contain_value(this->blocks[block_id], value)) return false;
     }
     return true;
 }

@@ -2,10 +2,12 @@
 
 #include <iostream>
 
-standard_sudoku::standard_sudoku()
- : sudoku_base<unsigned short>{{1, 2, 3, 4, 5, 6, 7, 8, 9}} {
+standard_sudoku::standard_sudoku(const size_t size, const size_t difficulty, const size_t remove_tries)
+ : sudoku_base<unsigned short>{standard_sudoku::generate_possibilities(size)}, size(size) {
     this->initialize_grid();
-    this->fill_grid();
+    this->solve();
+
+    std::cout << "Success: " << this->generate_unsolved(difficulty, remove_tries) << std::endl;
 
     for(const std::pair<const size_t, std::unordered_map<size_t, cell_base<unsigned short>>>& column : this->grid) {
         for(const std::pair<const size_t, cell_base<unsigned short>>& cell : column.second) {
@@ -15,7 +17,7 @@ standard_sudoku::standard_sudoku()
     }
 
     std::cout << std::endl;
-    this->generate_unsolved(40, 25);
+    this->solve();
     std::cout << std::endl;
 
     for(const std::pair<const size_t, std::unordered_map<size_t, cell_base<unsigned short>>>& column : this->grid) {
@@ -32,51 +34,54 @@ standard_sudoku::~standard_sudoku() {
 //private
 
 void standard_sudoku::initialize_grid() {
-    for(int x = 0; x < 9; x++) {
-        for(int y = 0; y < 9; y++) {
-            this->add_cell(position{ x, y });
+    for(int x = 0; x < this->size; x++) {
+        for(int y = 0; y < this->size; y++) {
+            this->register_block(x * this->size, y * this->size);
         }
-    }
-    for(int x = 0; x < 9; x++) {
-        this->add_block(std::vector<position>{ 
-            position{ x, 0 },
-            position{ x, 1 },
-            position{ x, 2 },
-            position{ x, 3 },
-            position{ x, 4 },
-            position{ x, 5 },
-            position{ x, 6 },
-            position{ x, 7 },
-            position{ x, 8 },
-         });
-    }
-    for(int y = 0; y < 9; y++) {
-        this->add_block(std::vector<position>{ 
-            position{ 0, y },
-            position{ 1, y },
-            position{ 2, y },
-            position{ 3, y },
-            position{ 4, y },
-            position{ 5, y },
-            position{ 6, y },
-            position{ 7, y },
-            position{ 8, y },
-         });
     }
 
-    for(int x = 0; x < 9; x+=3) {
-        for(int y = 0; y < 9; y+=3) {
-            this->add_block(std::vector<position>{ 
-                position{ x, y },
-                position{ x + 1, y },
-                position{ x + 2, y },
-                position{ x, y + 1},
-                position{ x + 1, y + 1 },
-                position{ x + 2, y + 1 },
-                position{ x, y + 2},
-                position{ x + 1, y + 2 },
-                position{ x + 2, y + 2 },
-            });
+    
+
+    for(int x = 0; x < this->size * this->size; x++) {
+        std::vector<position> row_indices;
+        row_indices.reserve(this->size * this->size);
+        for(int y = 0; y < this->size * this->size; y++) {
+            row_indices.push_back(position{ x, y });
+        }
+        this->add_block(row_indices);
+    }
+
+    for(int y = 0; y < this->size * this->size; y++) {
+        std::vector<position> row_indices;
+        row_indices.reserve(this->size * this->size);
+        for(int x = 0; x < this->size * this->size; x++) {
+            row_indices.push_back(position{ x, y });
+        }
+        this->add_block(row_indices);
+    }
+}
+
+void standard_sudoku::register_block(const int x, const int y) {
+    std::vector<position> block_indices;
+    block_indices.reserve(this->size * this->size);
+    for(int x_off = 0; x_off < this->size; x_off++) {
+        for(int y_off = 0; y_off < this->size; y_off++) {
+            position cell_pos = position{ x + x_off, y + y_off };
+            this->add_cell(cell_pos);
+            block_indices.push_back(cell_pos);
         }
     }
+    this->add_block(block_indices);
+}
+
+//static
+std::vector<unsigned short> standard_sudoku::generate_possibilities(const size_t size) {
+    std::vector<unsigned short> possibilities;
+    possibilities.resize(size * size);
+
+    for(int p = 1; p <= size * size; p++) {
+        possibilities.push_back(p);
+    }
+
+    return possibilities;
 }

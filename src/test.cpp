@@ -4,7 +4,7 @@
 
 int main() {
     //srand(time(nullptr));
-    standard_sudoku sudoku{};
+    standard_sudoku sudoku{4, 120, 50};
 
     return 0;
 }
