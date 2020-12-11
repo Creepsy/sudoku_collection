@@ -2,12 +2,19 @@
 
 #include "standard_sudoku.h"
 #include "donut_sudoku.h"
+#include "overlapping_sudoku.h"
 
-const int print_size = 9;
+const int print_size = 21;
 
 int main() {
     srand(time(nullptr));
-    donut_sudoku sudoku{3, 150, 50};
+    overlapping_sudoku sudoku{3, 200, 50, std::vector<position>{
+        position{ 0, 0 },
+        position{ 6, 6 },
+        position{ 12, 0 },
+        position{ 0, 12 },
+        position{ 12, 12 }
+    }};
     std::unordered_map<size_t, std::unordered_map<size_t, cell_base<unsigned short>>> grid = sudoku.get_grid();
 
     for(int x = 0; x < print_size; x++) {
