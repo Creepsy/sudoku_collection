@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 #include "standard_sudoku.h"
 #include "donut_sudoku.h"
@@ -11,6 +12,9 @@ const int px_end = 13;
 const int py_start = -5;
 const int py_end = 9;
 
+template<class typ>
+std::string as_python_dictionary(const std::unordered_map<size_t, std::unordered_map<size_t, cell_base<typ>>>& grid);
+
 int main() {
     srand(time(nullptr));
     /*overlapping_sudoku sudoku{ 3, 250, 10, std::vector<position>{
@@ -20,8 +24,11 @@ int main() {
         position{ 0, 12 },
         position{ 12, 12 }
     } };*/
-    star_sudoku sudoku{ 50, 5 };
+    star_sudoku sudoku{ 30, 5 };
     std::unordered_map<size_t, std::unordered_map<size_t, cell_base<unsigned short>>> grid = sudoku.get_grid();
+
+    std::cout << as_python_dictionary(grid) << std::endl;
+    std::cout << std::endl;
 
     for(int y = py_start; y < py_end; y++) {
         for(int x = px_start; x < px_end; x++) {
@@ -38,6 +45,9 @@ int main() {
     sudoku.solve();
     grid = sudoku.get_grid();
 
+    std::cout << as_python_dictionary(grid) << std::endl;
+    std::cout << std::endl;
+
     for(int y = py_start; y < py_end; y++) {
         for(int x = px_start; x < px_end; x++) {
             try{
@@ -50,4 +60,17 @@ int main() {
     }
 
     return 0;
+}
+
+template<class typ>
+std::string as_python_dictionary(const std::unordered_map<size_t, std::unordered_map<size_t, cell_base<typ>>>& grid) {
+    std::string dictionary_str = "sudoku = {\n";
+    for(const std::pair<const size_t, std::unordered_map<size_t, cell_base<typ>>>& column : grid) {
+        for(const std::pair<const size_t, cell_base<typ>>& cell : column.second) {
+            dictionary_str += "(" + std::to_string(column.first) + ", " + std::to_string(cell.first) + ") : " + std::to_string(cell.second.value) + ", ";
+        }
+        dictionary_str += "\n";
+    }
+
+    return dictionary_str + "}";
 }
