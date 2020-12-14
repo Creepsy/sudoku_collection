@@ -5,15 +5,17 @@
 #include "donut_sudoku.h"
 #include "overlapping_sudoku.h"
 #include "star_sudoku.h"
+#include "color_sudoku.h"
 
 const int px_start = 0;
-const int px_end = 13;
+const int px_end = 9;
 
-const int py_start = -5;
+const int py_start = 0;
 const int py_end = 9;
 
 template<class typ>
 std::string as_python_dictionary(const std::unordered_map<size_t, std::unordered_map<size_t, cell_base<typ>>>& grid);
+std::string as_python_list(const std::vector<block_base>& blocks);
 
 int main() {
     srand(time(nullptr));
@@ -24,8 +26,11 @@ int main() {
         position{ 0, 12 },
         position{ 12, 12 }
     } };*/
-    star_sudoku sudoku{ 30, 5 };
+    color_sudoku sudoku{ 3, 61, 5 };
     std::unordered_map<size_t, std::unordered_map<size_t, cell_base<unsigned short>>> grid = sudoku.get_grid();
+
+    std::cout << as_python_list(sudoku.get_blocks()) << std::endl;
+    std::cout << std::endl;
 
     std::cout << as_python_dictionary(grid) << std::endl;
     std::cout << std::endl;
@@ -73,4 +78,20 @@ std::string as_python_dictionary(const std::unordered_map<size_t, std::unordered
     }
 
     return dictionary_str + "}";
+}
+
+std::string as_python_list(const std::vector<block_base>& blocks) {
+    std::string list_str = "blocks = [\n";
+
+    for(const block_base& block : blocks) {
+        list_str += "[";
+
+        for(const position& member : block.members) {
+            list_str += "(" + std::to_string(member.x) + ", " + std::to_string(member.y) + "),";
+        }
+
+        list_str += "],\n";
+    }
+
+    return list_str + "]";
 }

@@ -22,8 +22,6 @@ void standard_sudoku::initialize_grid() {
         }
     }
 
-    
-
     for(int x = 0; x < this->size * this->size; x++) {
         std::vector<position> row_indices;
         row_indices.reserve(this->size * this->size);

@@ -14,13 +14,13 @@ struct path_node {
 template<class value_type>
 class sudoku_base {
     private:
-        typedef bool (*cell_criteria)(const cell_base<value_type>& cell);
-        std::vector<position> get_all_cells_matching_criteria(cell_criteria cirteria);
-
         size_t cell_with_lowest_possibilities(const std::vector<position>& cells);
 
         int get_solution_type();
     protected:
+        typedef bool (*cell_criteria)(const cell_base<value_type>& cell);
+        std::vector<position> get_all_cells_matching_criteria(cell_criteria cirteria);
+
         const std::vector<value_type> value_possibilities;
         std::vector<block_base> blocks;
         std::unordered_map<size_t, std::unordered_map<size_t, cell_base<value_type>>> grid;
@@ -40,5 +40,6 @@ class sudoku_base {
         bool generate_unsolved(const size_t to_remove, const size_t max_tries);
         void solve();
         std::unordered_map<size_t, std::unordered_map<size_t, cell_base<value_type>>>& get_grid();
+        std::vector<block_base>& get_blocks();
         virtual ~sudoku_base();
 };

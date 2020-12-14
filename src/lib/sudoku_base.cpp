@@ -89,6 +89,11 @@ std::unordered_map<size_t, std::unordered_map<size_t, cell_base<value_type>>>& s
 }
 
 template<class value_type>
+std::vector<block_base>& sudoku_base<value_type>::get_blocks() {
+    return this->blocks;
+}
+
+template<class value_type>
 sudoku_base<value_type>::~sudoku_base() {
 }
 
@@ -162,8 +167,6 @@ bool sudoku_base<value_type>::is_valid(value_type value, position cell) {
     return true;
 }
 
-//private
-
 template<class value_type>
 std::vector<position> sudoku_base<value_type>::get_all_cells_matching_criteria(cell_criteria criteria) {
     std::vector<position> cells;
@@ -175,6 +178,8 @@ std::vector<position> sudoku_base<value_type>::get_all_cells_matching_criteria(c
 
     return cells;
 }
+
+//private
 
 template<class value_type>
 size_t sudoku_base<value_type>::cell_with_lowest_possibilities(const std::vector<position>& cells) {
