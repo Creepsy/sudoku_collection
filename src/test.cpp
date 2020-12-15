@@ -26,7 +26,7 @@ int main() {
         position{ 0, 12 },
         position{ 12, 12 }
     } };*/
-    color_sudoku sudoku{ 3, 61, 5 };
+    color_sudoku sudoku{ 9, 65, 5 };
     std::unordered_map<size_t, std::unordered_map<size_t, cell_base<unsigned short>>> grid = sudoku.get_grid();
 
     std::cout << as_python_list(sudoku.get_blocks()) << std::endl;

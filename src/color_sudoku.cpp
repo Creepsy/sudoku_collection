@@ -18,25 +18,25 @@ color_sudoku::~color_sudoku() {
 //private
 
 void color_sudoku::initialize_grid() {
-    for(int x = 0; x < this->size * this->size; x++) {
-        for(int y = 0; y < this->size * this->size; y++) {
+    for(int x = 0; x < this->size; x++) {
+        for(int y = 0; y < this->size; y++) {
             this->add_cell(position{ x, y });
         }
     }
 
-    for(int x = 0; x < this->size * this->size; x++) {
+    for(int x = 0; x < this->size; x++) {
         std::vector<position> row_indices;
-        row_indices.reserve(this->size * this->size);
-        for(int y = 0; y < this->size * this->size; y++) {
+        row_indices.reserve(this->size);
+        for(int y = 0; y < this->size; y++) {
             row_indices.push_back(position{ x, y });
         }
         this->add_block(row_indices);
     }
 
-    for(int y = 0; y < this->size * this->size; y++) {
+    for(int y = 0; y < this->size; y++) {
         std::vector<position> row_indices;
-        row_indices.reserve(this->size * this->size);
-        for(int x = 0; x < this->size * this->size; x++) {
+        row_indices.reserve(this->size);
+        for(int x = 0; x < this->size; x++) {
             row_indices.push_back(position{ x, y });
         }
         this->add_block(row_indices);
@@ -45,12 +45,12 @@ void color_sudoku::initialize_grid() {
 
 void color_sudoku::add_color_blocks() {
     std::vector<std::vector<position>> numbers;
-    numbers.reserve(this->size * this->size);
+    numbers.reserve(this->size);
 
 
-    for(int n = 1; n <= this->size * this->size; n++) {
+    for(int n = 1; n <= this->size; n++) {
         std::vector<position> nums;
-        nums.reserve(this->size * this->size);
+        nums.reserve(this->size);
         for(const std::pair<const size_t, std::unordered_map<size_t, cell_base<unsigned short>>>& column : this->grid) {
             for(const std::pair<const size_t, cell_base<unsigned short>>& cell : column.second) {
                 if(cell.second.value == n) {
@@ -61,10 +61,10 @@ void color_sudoku::add_color_blocks() {
         numbers.push_back(nums);
     }
 
-    for(int b = 0; b < this->size * this->size; b++) {
+    for(int b = 0; b < this->size; b++) {
         std::vector<position> block;
-        block.reserve(this->size * this->size);
-        for(int p = 0; p < this->size * this->size; p++) {
+        block.reserve(this->size);
+        for(int p = 0; p < this->size; p++) {
             int i = rand() % numbers[p].size();
             block.push_back(numbers[p][i]);
             numbers[p].erase(numbers[p].begin() + i);
@@ -77,9 +77,9 @@ void color_sudoku::add_color_blocks() {
 //static
 std::vector<unsigned short> color_sudoku::generate_possibilities(const size_t size) {
     std::vector<unsigned short> possibilities;
-    possibilities.resize(size * size);
+    possibilities.resize(size);
 
-    for(int p = 1; p <= size * size; p++) {
+    for(int p = 1; p <= size; p++) {
         possibilities.push_back(p);
     }
 
