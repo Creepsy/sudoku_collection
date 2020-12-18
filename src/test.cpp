@@ -7,6 +7,7 @@
 #include "star_sudoku.h"
 #include "color_sudoku.h"
 #include "color_blocks_sudoku.h"
+#include "cross_sudoku.h"
 
 const int px_start = 0;
 const int px_end = 9;
@@ -27,7 +28,7 @@ int main() {
         position{ 0, 12 },
         position{ 12, 12 }
     } };*/
-    color_blocks_sudoku sudoku{ 2, 25, 5 };
+    cross_sudoku sudoku{ 2, 64, 5 };
     std::unordered_map<size_t, std::unordered_map<size_t, cell_base<unsigned short>>> grid = sudoku.get_grid();
 
     std::cout << as_python_list(sudoku.get_blocks()) << std::endl;

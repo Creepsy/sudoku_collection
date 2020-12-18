@@ -3,8 +3,8 @@ sDir = src/
 lDir = src/lib/
 args = -O3
 
-test: $(sDir)test.cpp $(bDir)standard_sudoku.o $(bDir)donut_sudoku.o $(bDir)overlapping_sudoku.o $(bDir)star_sudoku.o $(bDir)color_sudoku.o $(bDir)color_blocks_sudoku.o
-	g++ $(sDir)test.cpp -o test $(bDir)standard_sudoku.o $(args) $(bDir)donut_sudoku.o $(bDir)overlapping_sudoku.o $(bDir)star_sudoku.o $(bDir)color_sudoku.o $(bDir)color_blocks_sudoku.o
+test: $(sDir)test.cpp $(bDir)standard_sudoku.o $(bDir)donut_sudoku.o $(bDir)overlapping_sudoku.o $(bDir)star_sudoku.o $(bDir)color_sudoku.o $(bDir)color_blocks_sudoku.o $(bDir)cross_sudoku.o
+	g++ $(sDir)test.cpp -o test $(bDir)standard_sudoku.o $(args) $(bDir)donut_sudoku.o $(bDir)overlapping_sudoku.o $(bDir)star_sudoku.o $(bDir)color_sudoku.o $(bDir)color_blocks_sudoku.o $(bDir)cross_sudoku.o
 
 $(bDir)standard_sudoku.o: $(lDir)sudoku_base.h $(lDir)sudoku_base.cpp $(sDir)standard_sudoku.cpp $(sDir)standard_sudoku.h $(lDir)cell_base.h $(lDir)block_base.h
 	g++ -c $(sDir)standard_sudoku.cpp -o $(bDir)standard_sudoku.o $(args)
@@ -23,3 +23,6 @@ $(bDir)color_sudoku.o: $(lDir)sudoku_base.h $(lDir)sudoku_base.cpp $(sDir)color_
 
 $(bDir)color_blocks_sudoku.o: $(lDir)sudoku_base.h $(lDir)sudoku_base.cpp $(sDir)color_blocks_sudoku.cpp $(sDir)color_blocks_sudoku.h $(lDir)cell_base.h $(lDir)block_base.h
 	g++ -c $(sDir)color_blocks_sudoku.cpp -o $(bDir)color_blocks_sudoku.o $(args)
+
+$(bDir)cross_sudoku.o: $(lDir)sudoku_base.h $(lDir)sudoku_base.cpp $(sDir)cross_sudoku.cpp $(sDir)cross_sudoku.h $(lDir)cell_base.h $(lDir)block_base.h
+	g++ -c $(sDir)cross_sudoku.cpp -o $(bDir)cross_sudoku.o $(args)
